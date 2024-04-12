@@ -2,36 +2,46 @@ package com.example.tsp_server.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import java.util.Set;
 
 @Entity
-@Table(name = "Chat_groups")
+@Table(name = "chat_groups")
 public class ChatGroup {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "group_id")
-    private Integer id;
+    private Long groupId;
 
-    @Column(name = "group_name")
-    private String name;
+    private String groupName;
 
-    // Getters and setters
-    public Integer getId() {
-        return id;
+    @OneToMany(mappedBy = "chatGroup")
+    private Set<User> users;
+
+    public Long getGroupId() {
+        return groupId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
-    public String getName() {
-        return name;
+    public String getGroupName() {
+        return groupName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 }
