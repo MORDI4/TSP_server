@@ -1,37 +1,44 @@
 package com.example.tsp_server.service;
 
+import com.example.tsp_server.dto.RegistrationDto;
 import com.example.tsp_server.model.User;
 import com.example.tsp_server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.example.tsp_server.dto.RegistrationDto;
-import java.util.List;
+
 import java.util.Optional;
 
 @Service
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public Optional<User> authenticate(String login, String password) {
+
         return userRepository.findByLogin(login)
-                .filter(user -> user.getPassword().equals(password));
+                .filter(user -> bCryptPasswordEncoder.matches(password, user.getPassword()));
     }
 
-    public void registerNewUser(RegistrationDto registrationDto) {
+    public User registerNewUser(RegistrationDto registrationDto) {
+        if (userRepository.findByLogin(registrationDto.getUsername()).isPresent()) {
+            return null;
+        }
+
         User user = new User();
-        user.setName(registrationDto.getUsername());
-        user.setPassword(registrationDto.getPassword());
-        user.setLanguageId(getLanguageIdByName(registrationDto.getLanguage())); //
         user.setLogin(registrationDto.getUsername());
+        user.setPassword(bCryptPasswordEncoder.encode(registrationDto.getPassword()));
+        user.setLanguageId(getLanguageIdByName(registrationDto.getLanguage()));
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
-
 
     private Integer getLanguageIdByName(String languageName) {
 
