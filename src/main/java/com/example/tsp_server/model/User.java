@@ -4,34 +4,32 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer user_id;
-    private String name;
+    @Column(name = "user_id")
+    private Integer userId;
+
+    @Column(name = "password")
     private String password;
-    private Integer language_id;
+
+    @Column(name = "language_id")
+    private Integer languageId;
+
+    @Column(name = "login")
     private String login;
 
     // Getters and setters
     public Integer getUserId() {
-        return user_id;
+        return userId;
     }
 
-    public void setUserId(Integer user_id) {
-        this.user_id = user_id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getPassword() {
@@ -43,11 +41,11 @@ public class User {
     }
 
     public Integer getLanguageId() {
-        return language_id;
+        return languageId;
     }
 
-    public void setLanguageId(Integer language_id) {
-        this.language_id = language_id;
+    public void setLanguageId(Integer languageId) {
+        this.languageId = languageId;
     }
 
     public String getLogin() {

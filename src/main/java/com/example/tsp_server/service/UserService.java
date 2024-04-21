@@ -2,46 +2,50 @@ package com.example.tsp_server.service;
 
 import com.example.tsp_server.dto.RegistrationDto;
 import com.example.tsp_server.model.User;
+import com.example.tsp_server.model.Language;
 import com.example.tsp_server.repository.UserRepository;
+import com.example.tsp_server.repository.LanguageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final LanguageRepository languageRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserService(UserRepository userRepository, LanguageRepository languageRepository) {
         this.userRepository = userRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.languageRepository = languageRepository;
     }
 
     public Optional<User> authenticate(String login, String password) {
 
         return userRepository.findByLogin(login)
-                .filter(user -> bCryptPasswordEncoder.matches(password, user.getPassword()));
+                .filter(user -> user.getPassword().equals(password));
     }
 
+    @Transactional
     public User registerNewUser(RegistrationDto registrationDto) {
-        if (userRepository.findByLogin(registrationDto.getUsername()).isPresent()) {
-            return null;
+        logger.info("Próba zarejestrowania użytkownika przy użyciu nazwy użytkownika: " + registrationDto.getLogin());
+        Optional<User> existingUser = userRepository.findByLogin(registrationDto.getLogin());
+        if (existingUser.isPresent()) {
+            throw new IllegalStateException("Użytkownik już istnieje");
         }
+        Language language = languageRepository.findByName(registrationDto.getLanguage())
+                .orElseThrow(() -> new IllegalStateException("Nie znaleziono języka"));
 
         User user = new User();
-        user.setLogin(registrationDto.getUsername());
-        user.setPassword(bCryptPasswordEncoder.encode(registrationDto.getPassword()));
-        user.setLanguageId(getLanguageIdByName(registrationDto.getLanguage()));
+        user.setLogin(registrationDto.getLogin());
+        user.setPassword(registrationDto.getPassword()); // bez szyfrowania
+        user.setLanguageId(language.getId());
 
         return userRepository.save(user);
-    }
-
-    private Integer getLanguageIdByName(String languageName) {
-
-        return null;
     }
 }

@@ -1,11 +1,17 @@
-
 package com.example.tsp_server.dto;
 
-public class RegistrationDto {
+public class LoginCredentials {
     private String login;
     private String password;
-    private String language;
 
+    public LoginCredentials() {
+        // Konstruktor bezargumentowy potrzebny do serializacji/deserializacji JSON
+    }
+
+    public LoginCredentials(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
 
     public String getLogin() {
         return login;
@@ -21,13 +27,5 @@ public class RegistrationDto {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
 }
