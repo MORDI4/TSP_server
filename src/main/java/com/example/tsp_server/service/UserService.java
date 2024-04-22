@@ -11,18 +11,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
-
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final LanguageRepository languageRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    public UserService(UserRepository userRepository, LanguageRepository languageRepository) {
+    public UserService(UserRepository userRepository, LanguageRepository languageRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.languageRepository = languageRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public Optional<User> authenticate(String login, String password) {
@@ -43,7 +45,7 @@ public class UserService {
 
         User user = new User();
         user.setLogin(registrationDto.getLogin());
-        user.setPassword(registrationDto.getPassword()); // bez szyfrowania
+        user.setPassword(bCryptPasswordEncoder.encode(registrationDto.getPassword()));
         user.setLanguageId(language.getId());
 
         return userRepository.save(user);
