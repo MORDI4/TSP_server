@@ -1,3 +1,4 @@
+
 package com.example.tsp_server.model;
 
 import jakarta.persistence.Entity;

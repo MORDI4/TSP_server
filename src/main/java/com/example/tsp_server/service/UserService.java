@@ -26,7 +26,7 @@ public class UserService {
     }
 
     public Optional<User> authenticate(String login, String password) {
-
+        // Tutaj zakładamy, że hasło w bazie jest przechowywane jako zwykły tekst
         return userRepository.findByLogin(login)
                 .filter(user -> user.getPassword().equals(password));
     }
