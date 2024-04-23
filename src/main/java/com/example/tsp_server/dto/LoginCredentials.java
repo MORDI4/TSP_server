@@ -5,7 +5,7 @@ public class LoginCredentials {
     private String password;
 
     public LoginCredentials() {
-        // Konstruktor bezargumentowy potrzebny do serializacji/deserializacji JSON
+
     }
 
     public LoginCredentials(String login, String password) {

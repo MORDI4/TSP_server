@@ -27,12 +27,13 @@ public class UserService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public Optional<User> authenticate(String login, String password) {
-        // Tutaj zakładamy, że hasło w bazie jest przechowywane jako zwykły tekst
-        return userRepository.findByLogin(login)
-                .filter(user -> user.getPassword().equals(password));
-    }
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
+    public Optional<User> authenticate(String login, String password) {
+        return userRepository.findByLogin(login)
+                .filter(user -> passwordEncoder.matches(password, user.getPassword()));
+    }
     @Transactional
     public User registerNewUser(RegistrationDto registrationDto) {
         logger.info("Próba zarejestrowania użytkownika przy użyciu nazwy użytkownika: " + registrationDto.getLogin());

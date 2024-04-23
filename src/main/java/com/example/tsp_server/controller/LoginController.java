@@ -5,7 +5,7 @@ import com.example.tsp_server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.servlet.http.HttpSession;
 import java.util.Map;
 
 @RestController
@@ -20,9 +20,12 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginCredentials loginCredentials) {
+    public ResponseEntity<?> loginUser(@RequestBody LoginCredentials loginCredentials, HttpSession session) {
         return userService.authenticate(loginCredentials.getLogin(), loginCredentials.getPassword())
-                .map(user -> ResponseEntity.ok(Map.of("message", "Użytkownik zalogowany")))
+                .map(user -> {
+                    session.setAttribute("user", user); // Utworzenie sesji
+                    return ResponseEntity.ok(Map.of("message", "Użytkownik zalogowany", "userId", user.getUserId()));
+                })
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Błąd logowania")));
     }
 }
