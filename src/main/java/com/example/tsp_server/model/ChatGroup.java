@@ -1,29 +1,27 @@
 package com.example.tsp_server.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import java.util.Set;
 
 @Entity
-@Table(name = "Chat_groups")
 public class ChatGroup {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "group_id")
-    private Integer id;
+    private Long id;
 
-    @Column(name = "group_name")
     private String name;
 
-    // Getters and setters
-    public Integer getId() {
+    @OneToMany(mappedBy = "chatGroup")
+    private Set<ChatGroupMember> members;
+
+    public ChatGroup() {}
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -33,5 +31,13 @@ public class ChatGroup {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<ChatGroupMember> getMembers() {
+        return members;
+    }
+
+    public void setMembers(Set<ChatGroupMember> members) {
+        this.members = members;
     }
 }

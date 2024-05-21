@@ -8,6 +8,7 @@ import com.example.tsp_server.repository.ChatGroupRepository;
 import com.example.tsp_server.service.ChatGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,9 @@ public class ChatGroupController {
 
     @Autowired
     private ChatGroupMemberRepository chatGroupMemberRepository;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @GetMapping
     public List<ChatGroup> getAllGroups() {
@@ -43,4 +47,9 @@ public class ChatGroupController {
         return ResponseEntity.ok("Grupa utworzona pomyślnie");
     }
 
+    @PostMapping("/message")
+    public ResponseEntity<String> sendMessageToGroup(@RequestParam Long groupId, @RequestBody String message) {
+        messagingTemplate.convertAndSend("/topic/group/" + groupId, message);
+        return ResponseEntity.ok("Message sent");
+    }
 }
