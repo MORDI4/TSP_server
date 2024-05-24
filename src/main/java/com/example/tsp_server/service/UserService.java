@@ -6,6 +6,7 @@ import com.example.tsp_server.model.Language;
 import com.example.tsp_server.repository.UserRepository;
 import com.example.tsp_server.repository.LanguageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 @Service
 public class UserService {
 
@@ -29,13 +30,11 @@ public class UserService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
     public Optional<User> authenticate(String login, String password) {
         return userRepository.findByLogin(login)
-                .filter(user -> passwordEncoder.matches(password, user.getPassword()));
+                .filter(user -> bCryptPasswordEncoder.matches(password, user.getPassword()));
     }
+
     @Transactional
     public User registerNewUser(RegistrationDto registrationDto) {
         logger.info("Próba zarejestrowania użytkownika przy użyciu nazwy użytkownika: " + registrationDto.getLogin());
@@ -53,6 +52,7 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
