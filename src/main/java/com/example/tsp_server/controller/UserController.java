@@ -1,6 +1,7 @@
 package com.example.tsp_server.controller;
 
 import com.example.tsp_server.dto.RegistrationDto;
+import com.example.tsp_server.model.User;
 import com.example.tsp_server.service.UserService;
 import com.example.tsp_server.service.LanguageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +37,11 @@ public class UserController {
     public ResponseEntity<List<String>> getLanguages() {
         List<String> languages = languageService.findAllLanguageNames();
         return ResponseEntity.ok(languages);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.findAllUsers();
+        return ResponseEntity.ok(users);
     }
 }
