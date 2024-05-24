@@ -1,6 +1,7 @@
 package com.example.tsp_server.controller;
 
 import com.example.tsp_server.dto.GroupCreationDto;
+import com.example.tsp_server.dto.MessageDto; // Utwórz tę klasę
 import com.example.tsp_server.model.ChatGroup;
 import com.example.tsp_server.model.ChatGroupMember;
 import com.example.tsp_server.repository.ChatGroupMemberRepository;
@@ -52,4 +53,11 @@ public class ChatGroupController {
         messagingTemplate.convertAndSend("/topic/group/" + groupId, message);
         return ResponseEntity.ok("Message sent");
     }
+
+//    @PostMapping("/chat_messages")
+//    public ResponseEntity<String> sendMessage(@RequestBody MessageDto messageDto) {
+//        // Możesz tu dodać logikę do zapisania wiadomości w bazie danych
+//        System.out.println("Received message: " + messageDto.getMessage() + " for group ID: " + messageDto.getGroupId());
+//        return ResponseEntity.ok().body("Message received");
+//    }
 }
